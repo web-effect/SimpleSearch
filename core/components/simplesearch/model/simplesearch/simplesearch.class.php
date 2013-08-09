@@ -163,6 +163,8 @@ class SimpleSearch {
             }
         }
         $this->searchString = implode(' ', $this->searchArray);
+        // one last pass to filter for modx tags
+        $this->searchString = str_replace(array('[[',']]'),array('&#91;&#91;','&#93;&#93;'),$this->searchString);
         return $this->searchString;
     }
 

@@ -1,5 +1,9 @@
 Changelog for SimpleSearch.
 
+SimpleSearch 1.6.1
+========================================================================
+- [#69] Apply additional guard against injection of modx tags
+
 SimpleSearch 1.6.0
 ========================================================================
 - [#65] Fix issue with multiple search terms highlighting
