@@ -33,11 +33,12 @@
  *
  * @package simplesearch
  */
+
 require_once $modx->getOption('sisea.core_path',null,$modx->getOption('core_path').'components/simplesearch/').'model/simplesearch/simplesearch.class.php';
 $search = new SimpleSearch($modx,$scriptProperties);
 
 $search->loadDriver($scriptProperties);
-if (!$search->driver || !($search->driver instanceof SimpleSearchDriverSolr)) return;
+if (!$search->driver || (!($search->driver instanceof SimpleSearchDriverSolr) && !($search->driver instanceof SimpleSearchDriverElastic))) return;
 
 /**
  * helper method for missing params in events

@@ -1,5 +1,9 @@
 Changelog for SimpleSearch.
 
+SimpleSearch 1.6.2
+========================================================================
+- Added driver for ElasticSearch
+
 SimpleSearch 1.6.1
 ========================================================================
 - [#69] Apply additional guard against injection of modx tags

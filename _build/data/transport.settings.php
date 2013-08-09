@@ -202,6 +202,33 @@ $settings['sisea.solr.proxy_password']->fromArray(array(
     'area' => 'Solr',
 ),'',true,true);
 
+$settings['sisea.elastic.hostname']= $modx->newObject('modSystemSetting');
+$settings['sisea.elastic.hostname']->fromArray(array(
+    'key' => 'sisea.elastic.hostname',
+    'value' => '127.0.0.1',
+    'xtype' => 'textfield',
+    'namespace' => 'sisea',
+    'area' => 'ElasticSearch',
+),'',true,true);
+
+$settings['sisea.elastic.port']= $modx->newObject('modSystemSetting');
+$settings['sisea.elastic.port']->fromArray(array(
+    'key' => 'sisea.elastic.port',
+    'value' => '9200',
+    'xtype' => 'textfield',
+    'namespace' => 'sisea',
+    'area' => 'ElasticSearch',
+),'',true,true);
+
+$settings['sisea.elastic.index']= $modx->newObject('modSystemSetting');
+$settings['sisea.elastic.index']->fromArray(array(
+    'key' => 'sisea.elastic.index',
+    'value' => 'SimpleSearchIndex',
+    'xtype' => 'textfield',
+    'namespace' => 'sisea',
+    'area' => 'ElasticSearch',
+),'',true,true);
+
 
 
 return $settings;
