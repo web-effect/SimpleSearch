@@ -1,6 +1,6 @@
 Changelog for SimpleSearch.
 
-SimpleSearch 1.6.2
+SimpleSearch 1.7.0
 ========================================================================
 - Added driver for ElasticSearch
 
