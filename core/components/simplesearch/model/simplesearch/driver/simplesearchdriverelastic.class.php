@@ -50,6 +50,8 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
             $file = $this->modx->getOption('sisea.core_path', null, $this->modx->getOption('core_path').'components/simplesearch/');
             $file .= 'model/simplesearch/driver/libs/' . $class . '.php';
 
+            $file = str_replace('\\', '/', $file);
+
             if (file_exists($file)) {
                 require_once($file);
             }
