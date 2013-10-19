@@ -84,7 +84,7 @@ class SimpleSearch {
             if (empty($chunk)) {
                 $chunk = $this->modx->getObject('modChunk',array('name' => $name),true);
                 if ($chunk == false) return false;
-            }		
+            }
             $this->chunks[$name] = $chunk->getContent();
         } else {
             $o = $this->chunks[$name];
@@ -231,7 +231,7 @@ class SimpleSearch {
 				));
 				$pageArray['text'] = 'First';
 				$pageArray['link'] = $this->modx->makeUrl($id, '',$parameters,$urlScheme);
-				$pagination .= $this->getChunk($pageFirstTpl,$pageArray);	
+				$pagination .= $this->getChunk($pageFirstTpl,$pageArray);
 				if (!empty($pagePrevTpl) && ($currentOffset - $perPage) >= $perPage) {
 					$parameters = $this->modx->request->getParameters();
 					$parameters = array_merge($parameters,array(
@@ -277,7 +277,7 @@ class SimpleSearch {
 				));
 				$pageArray['text'] = 'Last';
 				$pageArray['link'] = $this->modx->makeUrl($id, '',$parameters,$urlScheme);
-				$pagination .= $this->getChunk($pageLastTpl,$pageArray);	
+				$pagination .= $this->getChunk($pageLastTpl,$pageArray);
 			}
             if ($i < $pageLinkCount) {
                 $pagination .= $separator;
@@ -437,7 +437,7 @@ class SimpleSearch {
      * @param string $type The type of hook to load.
      * @param array $config An array of configuration parameters for the
      * hooks class
-     * @return fiHooks An instance of the fiHooks class.
+     * @return siHooks An instance of the fiHooks class.
      */
     public function loadHooks($type = 'post',$config = array()) {
         if (!$this->modx->loadClass('simplesearch.siHooks',$this->config['modelPath'],true,true)) {
