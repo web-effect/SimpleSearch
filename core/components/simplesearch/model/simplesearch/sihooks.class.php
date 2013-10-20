@@ -60,7 +60,7 @@ class siHooks {
      *
      * @param SimpleSearch &$simplesearch A reference to the SimpleSearch class instance.
      * @param array $config Optional. An array of configuration parameters.
-     * @return fiHooks
+     * @return siHooks
      */
     function __construct(SimpleSearch &$search,array $config = array()) {
         $this->search =& $search;
@@ -147,7 +147,7 @@ class siHooks {
     public function getErrorMessage($delim = "\n") {
         return implode($delim,$this->errors);
     }
-    
+
     /**
      * Adds an error to the stack.
      *
