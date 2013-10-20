@@ -27,7 +27,7 @@
 require_once dirname(__FILE__) . '/simplesearchdriver.class.php';
 /**
  * Standard sql-based search driver for SimpleSearch
- * 
+ *
  * @package simplesearch
  */
 class SimpleSearchDriverBasic extends SimpleSearchDriver {
@@ -49,9 +49,10 @@ class SimpleSearchDriverBasic extends SimpleSearchDriver {
         $andTerms = $this->modx->getOption('andTerms',$scriptProperties,true);
         $matchWildcard = $this->modx->getOption('matchWildcard',$scriptProperties,true);
         $docFields = explode(',',$this->modx->getOption('docFields',$scriptProperties,'pagetitle,longtitle,alias,description,introtext,content'));
+        $includeTVs = $this->modx->getOption('includeTVs', $scriptProperties, false);
 
     	$c = $this->modx->newQuery('modResource');
-        $c->leftJoin('modTemplateVarResource','TemplateVarResources');
+        if ($includeTVs) $c->leftJoin('modTemplateVarResource','TemplateVarResources');
 
         /* if using customPackages, add here */
         $customPackages = array();
@@ -92,7 +93,7 @@ class SimpleSearchDriverBasic extends SimpleSearchDriver {
                     if ($i > $maxWords) break;
                     $term = $wildcard.$term.$wildcard;
                     foreach ($docFields as $field) {$whereArray[] = array($field.':LIKE', $term,xPDOQuery::SQL_OR,$whereGroup);}
-                    $whereArray[] = array('TemplateVarResources.value:LIKE', $term, xPDOQuery::SQL_OR, $whereGroup);
+                    if ($includeTVs) $whereArray[] = array('TemplateVarResources.value:LIKE', $term, xPDOQuery::SQL_OR, $whereGroup);
                     if (is_array($customPackages) && !empty($customPackages)) {
                         foreach ($customPackages as $package) {
                             $fields = explode(',',$package[1]);
@@ -169,7 +170,7 @@ class SimpleSearchDriverBasic extends SimpleSearchDriver {
             $f = $this->modx->getSelectColumns('modResource','modResource','',array('id'));
             $c->where(array("{$f}:IN" => $ids),xPDOQuery::SQL_AND,null,$whereGroup);
         }
-        
+
     	$c->where(array('published:=' => 1), xPDOQuery::SQL_AND, null, $whereGroup);
     	$c->where(array('searchable:=' => 1), xPDOQuery::SQL_AND, null, $whereGroup);
     	$c->where(array('deleted:=' => 0), xPDOQuery::SQL_AND, null, $whereGroup);
@@ -257,5 +258,5 @@ class SimpleSearchDriverBasic extends SimpleSearchDriver {
         }
         return true;
     }
-    
+
 }
