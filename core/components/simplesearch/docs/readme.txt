@@ -1,7 +1,7 @@
 =====================
 Snippet: SimpleSearch
 =====================
-Version: 1.7.0
+Version: 1.8.0
 Author: Shaun McCormick <shaun+sisea@modx.com>
 License: GNU GPLv2 (or later at your option)
 

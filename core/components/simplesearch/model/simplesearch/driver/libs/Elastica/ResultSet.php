@@ -1,6 +1,7 @@
 <?php
 
 namespace Elastica;
+use Elastica\Exception\InvalidException;
 
 /**
  * Elastica result set
@@ -12,7 +13,7 @@ namespace Elastica;
  * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
  */
-class ResultSet implements \Iterator, \Countable
+class ResultSet implements \Iterator, \Countable, \ArrayAccess
 {
     /**
      * Results
@@ -20,6 +21,13 @@ class ResultSet implements \Iterator, \Countable
      * @var array Results
      */
     protected $_results = array();
+
+    /**
+    * Suggests
+    *
+    * @var array Suggests
+    */
+    protected $_suggests = array();
 
     /**
      * Current position
@@ -93,6 +101,14 @@ class ResultSet implements \Iterator, \Countable
                 $this->_results[] = new Result($hit);
             }
         }
+
+        foreach($result as $key => $value) {
+            if($key != '_shards') {
+                if(isset($value[0]['options']) && count($value[0]['options'])>0) {
+                    $this->_suggests[$key] = $value[0];
+                }
+            }
+        }
     }
 
     /**
@@ -103,6 +119,16 @@ class ResultSet implements \Iterator, \Countable
     public function getResults()
     {
         return $this->_results;
+    }
+
+    /**
+    * Return all suggests
+    *
+    * @return Suggest[] Suggests
+    */
+    public function getSuggests() 
+    {
+        return $this->_suggests;
     }
 
     /**
@@ -198,6 +224,16 @@ class ResultSet implements \Iterator, \Countable
     }
 
     /**
+     * Returns size of current suggests
+     *
+     * @return int Size of suggests
+     */
+    public function countSuggests()
+    {
+        return sizeof($this->_suggests);
+    }
+
+    /**
      * Returns the current object of the set
      *
      * @return \Elastica\Result|bool Set object or false if not valid (no more entries)
@@ -247,5 +283,66 @@ class ResultSet implements \Iterator, \Countable
     public function rewind()
     {
         $this->_position = 0;
+    }
+
+    /**
+     * Whether a offset exists
+     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
+     *
+     * @param   integer $offset
+     * @return  boolean true on success or false on failure.
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->_results[$offset]);
+    }
+
+    /**
+     * Offset to retrieve
+     * @link http://php.net/manual/en/arrayaccess.offsetget.php
+     *
+     * @param   integer $offset
+     * @throws  Exception\InvalidException
+     * @return  Result|null
+     */
+    public function offsetGet($offset)
+    {
+        if ($this->offsetExists($offset)) {
+            return $this->_results[$offset];
+        } else {
+            throw new InvalidException("Offset does not exist.");
+        }
+    }
+
+    /**
+     * Offset to set
+     * @link http://php.net/manual/en/arrayaccess.offsetset.php
+     *
+     * @param   integer $offset
+     * @param   Result  $value
+     * @throws  Exception\InvalidException
+     */
+    public function offsetSet($offset, $value)
+    {
+        if (!($value instanceof Result)) {
+            throw new InvalidException("ResultSet is a collection of Result only.");
+        }
+
+        if (!isset($this->_results[$offset])) {
+            throw new InvalidException("Offset does not exist.");
+        }
+
+        $this->_results[$offset] = $value;
+    }
+
+    /**
+     * Offset to unset
+     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
+     *
+     * @param integer $offset
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->_results[$offset]);
     }
 }

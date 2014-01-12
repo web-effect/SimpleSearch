@@ -205,7 +205,7 @@ $settings['sisea.solr.proxy_password']->fromArray(array(
 $settings['sisea.elastic.hostname']= $modx->newObject('modSystemSetting');
 $settings['sisea.elastic.hostname']->fromArray(array(
     'key' => 'sisea.elastic.hostname',
-    'value' => '127.0.0.1',
+    'value' => 'http://127.0.0.1',
     'xtype' => 'textfield',
     'namespace' => 'sisea',
     'area' => 'ElasticSearch',
@@ -223,12 +223,29 @@ $settings['sisea.elastic.port']->fromArray(array(
 $settings['sisea.elastic.index']= $modx->newObject('modSystemSetting');
 $settings['sisea.elastic.index']->fromArray(array(
     'key' => 'sisea.elastic.index',
-    'value' => 'SimpleSearchIndex',
+    'value' => 'simplesearchindex',
     'xtype' => 'textfield',
     'namespace' => 'sisea',
     'area' => 'ElasticSearch',
 ),'',true,true);
 
+$settings['sisea.elastic.search_fields']= $modx->newObject('modSystemSetting');
+$settings['sisea.elastic.search_fields']->fromArray(array(
+    'key' => 'sisea.elastic.search_fields',
+    'value' => 'pagetitle^20,introtext^10,alias^5,content^1',
+    'xtype' => 'textfield',
+    'namespace' => 'sisea',
+    'area' => 'ElasticSearch',
+),'',true,true);
+
+$settings['sisea.elastic.search_boost']= $modx->newObject('modSystemSetting');
+$settings['sisea.elastic.search_boost']->fromArray(array(
+    'key' => 'sisea.elastic.search_boost',
+    'value' => '',
+    'xtype' => 'textfield',
+    'namespace' => 'sisea',
+    'area' => 'ElasticSearch',
+),'',true,true);
 
 
 return $settings;

@@ -144,6 +144,7 @@ class Thrift extends AbstractTransport
 
             /* @var $result RestResponse */
             $start = microtime(true);
+
             $result = $client->execute($restRequest);
             $response = new Response($result->body);
 

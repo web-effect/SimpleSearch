@@ -59,13 +59,12 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
         });
 
         $this->_connectionOptions = array(
-            'hostname' => $this->modx->getOption('sisea.elastic.hostname', null, '127.0.0.1'),
-            'port' => $this->modx->getOption('sisea.elastic.port', null, 9200),
+            'url' => $this->modx->getOption('sisea.elastic.hostname', null, 'http://127.0.0.1') . ':' . $this->modx->getOption('sisea.elastic.port', null, 9200).'/',
         );
 
         try {
             $this->client = new \Elastica\Client($this->_connectionOptions);
-            $this->index = $this->client->getIndex($this->modx->getOption('sisea.elastic.index', null, 'SimpleSearchIndex'));
+            $this->index = $this->client->getIndex(strtolower($this->modx->getOption('sisea.elastic.index', null, 'siplesearchindex')));
             if(!$this->index->exists()){
                 $this->index->create(
                     array(
@@ -81,7 +80,7 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
                                  'default_search' => array(
                                      "type" => "custom",
                                      "tokenizer" => "whitespace",
-                                     "filter" => array("asciifolding", "standard", "lowercase", "haystack_edgengram")
+                                     "filter" => array("asciifolding", "standard", "lowercase")
                                  )
                              ),
                              "filter" => array(
@@ -114,14 +113,68 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
      * @return array
      */
     public function search($string,array $scriptProperties = array()) {
-        /** @var \Elastica\Query\QueryString $query */
-        $query = new \Elastica\Query\QueryString();
-        $query->setDefaultOperator('AND');
+        $fields = $this->modx->getOption('sisea.elastic.search_fields', null, 'pagetitle^20,introtext^10,alias^5,content^1');
+
+        $fields = explode(',', $fields);
+        $fields = array_map('trim', $fields);
+        $fields = array_keys(array_flip($fields));
+        $fields = array_filter($fields);
+
+        if (empty($fields)) {
+            return false;
+        }
+
+        /** @var \Elastica\Query\MultiMatch $query */
+        $query = new \Elastica\Query\MultiMatch();
+        $query->setFields($fields);
         $query->setQuery($string);
+
+        $customFilterScore = new \Elastica\Query\CustomFiltersScore();
+        $customFilterScore->setQuery($query);
+
+        $searchBoosts = $this->modx->getOption('sisea.elastic.search_boost', null, '');
+        $searchBoosts = explode('|', $searchBoosts);
+        $searchBoosts = array_map('trim', $searchBoosts);
+        $searchBoosts = array_keys(array_flip($searchBoosts));
+        $searchBoosts = array_filter($searchBoosts);
+
+        $boosts = array();
+
+        foreach ($searchBoosts as $boost) {
+            $arr = array('field' => '', 'value' => '', 'boost' => 1.0);
+            $field = explode('=', $boost);
+            $field = array_map('trim', $field);
+            $field = array_keys(array_flip($field));
+            $field = array_filter($field);
+
+            if (count($field) != 2) continue;
+
+            $value = explode('^', $field[1]);
+            $value = array_map('trim', $value);
+            $value = array_keys(array_flip($value));
+            $value = array_filter($value);
+
+            if (count($value) != 2) continue;
+
+            $arr['field'] = $field[0];
+            $arr['value'] = $value[0];
+            $arr['boost'] = $value[1];
+
+            $boosts[] = $arr;
+        }
+
+        if (empty($boosts)) {
+            $customFilterScore->addFilter(new \Elastica\Filter\Term(array('type' => 'document')), 1);
+        } else {
+            foreach ($boosts as $boost) {
+                $customFilterScore->addFilter(new \Elastica\Filter\Term(array($boost['field'] => $boost['value'])), $boost['boost']);
+            }
+        }
+
 
         /** @var \Elastica\Query $elasticaQuery */
         $elasticaQuery = new \Elastica\Query();
-        $elasticaQuery->setQuery($query);
+        $elasticaQuery->setQuery($customFilterScore);
 
     	/* set limit */
         $perPage = $this->modx->getOption('perPage',$scriptProperties,10);
@@ -147,8 +200,8 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
         $contexts = $this->modx->getOption('contexts',$scriptProperties,'');
         $contexts = !empty($contexts) ? $contexts : $this->modx->context->get('key');
         $contexts = explode(',',$contexts);
-        $elasticaFilterContext  = new \Elastica\Filter\Term();
-        $elasticaFilterContext->setTerm('context_key', $contexts);
+        $elasticaFilterContext  = new \Elastica\Filter\Terms();
+        $elasticaFilterContext->setTerms('context_key', $contexts);
         $elasticaFilterAnd->addFilter($elasticaFilterContext);
 
         /* handle restrict search to these IDs */
@@ -203,7 +256,6 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
                 $sortArray[] = array($sortBys[$i] => $dir);
 
             }
-
             $elasticaQuery->setSort($sortArray);
         }
 
@@ -216,7 +268,6 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
             'query_time' => 0,
             'results' => array(),
         );
-
         $elasticaResultSet = $this->index->search($elasticaQuery);
 
         $elasticaResults  = $elasticaResultSet->getResults();
@@ -252,7 +303,7 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
         if (isset($fields['published']) && empty($fields['published'])) return false;
         if (isset($fields['deleted']) && !empty($fields['deleted'])) return false;
 
-        $type = $this->index->getType('resource');
+        $type = $this->index->getType($fields['context_key']);
         $document = new \Elastica\Document();
         $dateFields = array('createdon','editedon','deletedon','publishedon');
         foreach ($fields as $fieldName => $value) {
@@ -283,7 +334,16 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
      */
     public function removeIndex($id) {
         $this->modx->log(modX::LOG_LEVEL_DEBUG,'[SimpleSearch] Removing Resource From Index: '.$id);
-        $type = $this->index->getType('resource');
+
+        /** @var modResource $resource */
+        $resource = $this->modx->getObject('modResource', $id);
+        if ($resource) {
+            $typeName = $resource->context_key;
+        } else {
+            $typeName = 'web';
+        }
+
+        $type = $this->index->getType($typeName);
         $type->deleteById($id);
         $type->getIndex()->refresh();
     }
