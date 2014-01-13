@@ -60,6 +60,13 @@ $snippets[3]->fromArray(array(
     'description' => '',
     'snippet' => getSnippetContent($sources['elements'].'snippets/simplesearchindexall.snippet.php'),
 ),'',true,true);
-unset($properties);
+
+$snippets[3]= $modx->newObject('modSnippet');
+$snippets[3]->fromArray(array(
+    'id' => 3,
+    'name' => 'SimpleSearchElasticIndexSetup_default',
+    'description' => 'Setup snippet for ElasticSearch index',
+    'snippet' => getSnippetContent($sources['elements'].'snippets/simplesearchelasticindexsetup.snippet.php'),
+),'',true,true);
 
 return $snippets;

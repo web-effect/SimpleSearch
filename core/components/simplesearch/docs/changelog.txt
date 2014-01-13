@@ -1,5 +1,9 @@
 Changelog for SimpleSearch.
 
+SimpleSearch 1.8.1
+========================================================================
+- Added snippet for definition of ElasticSearch index (duplicate it and remove the _default from name to prevent recreating after update)
+
 SimpleSearch 1.8.0
 ========================================================================
 - Added support to ElasticSearch driver for using search fields

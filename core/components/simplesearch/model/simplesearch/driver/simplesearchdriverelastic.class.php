@@ -66,39 +66,14 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
             $this->client = new \Elastica\Client($this->_connectionOptions);
             $this->index = $this->client->getIndex(strtolower($this->modx->getOption('sisea.elastic.index', null, 'siplesearchindex')));
             if(!$this->index->exists()){
-                $this->index->create(
-                    array(
-                         'number_of_shards' => 5,
-                         'number_of_replicas' => 1,
-                         'analysis' => array(
-                             'analyzer' => array(
-                                 'default_index' => array(
-                                     "type" => "custom",
-                                     "tokenizer" => "whitespace",
-                                     "filter" => array("asciifolding", "standard", "lowercase", "haystack_edgengram")
-                                 ),
-                                 'default_search' => array(
-                                     "type" => "custom",
-                                     "tokenizer" => "whitespace",
-                                     "filter" => array("asciifolding", "standard", "lowercase")
-                                 )
-                             ),
-                             "filter" => array(
-                                 "haystack_ngram"=> array(
-                                    "type" => "nGram",
-                                    "min_gram" => 2,
-                                    "max_gram" => 30,
-                                 ),
-                                "haystack_edgengram" => array(
-                                    "type" => "edgeNGram",
-                                    "min_gram" => 2,
-                                    "max_gram" => 30,
-                                )
-                            )
-                        )
-                    ),
-                    true
-                );
+                $indexSetup = $this->modx->getObject('modSnippet', array('name' => 'SimpleSearchElasticIndexSetup'));
+                if ($indexSetup) {
+                    $indexOptions = $this->modx->fromJSON($this->modx->runSnippet('SimpleSearchElasticIndexSetup'));
+                } else {
+                    $indexOptions = $this->modx->fromJSON($this->modx->runSnippet('SimpleSearchElasticIndexSetup_default'));
+                }
+
+                $this->index->create($indexOptions,true);
             }
         } catch (Exception $e) {
             $this->modx->log(xPDO::LOG_LEVEL_ERROR,'Error connecting to ElasticSearch server: '.$e->getMessage());
