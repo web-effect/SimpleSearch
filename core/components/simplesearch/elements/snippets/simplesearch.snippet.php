@@ -75,6 +75,7 @@ $postHooks = $modx->getOption('postHooks',$scriptProperties,'');
 $activeFacet = $modx->getOption('facet',$_REQUEST,$modx->getOption('activeFacet',$scriptProperties,'default'));
 $activeFacet = $modx->sanitizeString($activeFacet);
 $facetLimit = $modx->getOption('facetLimit',$scriptProperties,5);
+$outputSeparator = $modx->getOption('outputSeparator',$scriptProperties,"\n");
 
 /* get results */
 $response = $search->getSearchResults($searchString,$scriptProperties);
@@ -82,6 +83,7 @@ $placeholders = array('query' => $searchString);
 $resultsTpl = array('default' => array('results' => array(),'total' => $response['total']));
 if (!empty($response['results'])) {
     /* iterate through search results */
+    $total = count($response['results']);
     foreach ($response['results'] as $resourceArray) {
         $resourceArray['idx'] = $idx;
         if (empty($resourceArray['link'])) {
@@ -97,7 +99,7 @@ if (!empty($response['results'])) {
             $extract = str_replace(array('[[',']]'),'',$extract);
             $resourceArray['extract'] = !empty($highlightResults) ? $search->addHighlighting($extract,$highlightClass,$highlightTag) : $extract;
         }
-        $resultsTpl['default']['results'][] = $search->getChunk($tpl,$resourceArray);
+        $resultsTpl['default']['results'][] = $search->getChunk($tpl,$resourceArray) . (($total > $idx) ? $outputSeparator : "");
         $idx++;
     }
 }
@@ -127,7 +129,7 @@ if (!empty($postHooks)) {
             foreach ($facetResults['results'] as $r) {
                 $r['idx'] = $idx;
                 $fTpl = !empty($scriptProperties['tpl'.$facetKey]) ? $scriptProperties['tpl'.$facetKey] : $tpl;
-                $resultsTpl[$facetKey]['results'][] = $search->getChunk($fTpl,$r);
+                $resultsTpl[$facetKey]['results'][] = $search->getChunk($fTpl,$r) . (($facetResults['total'] > $idx) ? $outputSeparator : "");
                 $idx++;
             }
         }
