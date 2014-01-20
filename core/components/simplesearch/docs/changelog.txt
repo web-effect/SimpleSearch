@@ -9,7 +9,6 @@ SimpleSearch 1.8.0
 - Added support to ElasticSearch driver for using search fields
 - Added support to ElasticSearch driver for boosting results by a field value
 - Updated Elastica to v0.90.7.0
-========================================================================
 - [#84] Czech localization
 - [#78] Japanese localization
 - [#77] Enable $tvPrefix to prefix TV placeholders

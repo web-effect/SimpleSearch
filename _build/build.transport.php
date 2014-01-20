@@ -40,7 +40,7 @@ set_time_limit(0);
 define('PKG_NAME','SimpleSearch');
 define('PKG_NAME_LOWER','simplesearch');
 define('PKG_VERSION','1.8.1');
-define('PKG_RELEASE','pl');
+define('PKG_RELEASE','beta1');
 
 /* define sources */
 $root = dirname(dirname(__FILE__)).'/';
