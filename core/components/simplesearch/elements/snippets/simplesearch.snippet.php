@@ -83,7 +83,6 @@ $placeholders = array('query' => $searchString);
 $resultsTpl = array('default' => array('results' => array(),'total' => $response['total']));
 if (!empty($response['results'])) {
     /* iterate through search results */
-    $total = count($response['results']);
     foreach ($response['results'] as $resourceArray) {
         $resourceArray['idx'] = $idx;
         if (empty($resourceArray['link'])) {
@@ -99,7 +98,7 @@ if (!empty($response['results'])) {
             $extract = str_replace(array('[[',']]'),'',$extract);
             $resourceArray['extract'] = !empty($highlightResults) ? $search->addHighlighting($extract,$highlightClass,$highlightTag) : $extract;
         }
-        $resultsTpl['default']['results'][] = $search->getChunk($tpl,$resourceArray) . (($total > $idx) ? $outputSeparator : "");
+        $resultsTpl['default']['results'][] = $search->getChunk($tpl,$resourceArray);
         $idx++;
     }
 }
@@ -129,7 +128,7 @@ if (!empty($postHooks)) {
             foreach ($facetResults['results'] as $r) {
                 $r['idx'] = $idx;
                 $fTpl = !empty($scriptProperties['tpl'.$facetKey]) ? $scriptProperties['tpl'.$facetKey] : $tpl;
-                $resultsTpl[$facetKey]['results'][] = $search->getChunk($fTpl,$r) . (($facetResults['total'] > $idx) ? $outputSeparator : "");
+                $resultsTpl[$facetKey]['results'][] = $search->getChunk($fTpl,$r);
                 $idx++;
             }
         }
@@ -139,7 +138,7 @@ if (!empty($postHooks)) {
 /* set faceted results to placeholders for easy result positioning */
 $output = array();
 foreach ($resultsTpl as $facetKey => $facetResults) {
-    $resultSet = implode("\n",$facetResults['results']);
+    $resultSet = implode($outputSeparator,$facetResults['results']);
     $placeholders[$facetKey.'.results'] = $resultSet;
     $placeholders[$facetKey.'.total'] = !empty($facetResults['total']) ? $facetResults['total'] : 0;
     $placeholders[$facetKey.'.key'] = $facetKey;
