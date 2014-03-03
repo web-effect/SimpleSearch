@@ -319,7 +319,11 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
         }
 
         $type = $this->index->getType($typeName);
-        $type->deleteById($id);
+
+        try {
+            $type->deleteById($id);
+        } catch (Exception $e) {}
+        
         $type->getIndex()->refresh();
     }
 }
