@@ -45,18 +45,7 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
      */
     public function initialize() {
 
-        spl_autoload_register(function($class){
-
-            $file = $this->modx->getOption('sisea.core_path', null, $this->modx->getOption('core_path').'components/simplesearch/');
-            $file .= 'model/simplesearch/driver/libs/' . $class . '.php';
-
-            $file = str_replace('\\', '/', $file);
-
-            if (file_exists($file)) {
-                require_once($file);
-            }
-
-        });
+        spl_autoload_register(array($this, 'autoLoad'));
 
         $this->_connectionOptions = array(
             'url' => $this->modx->getOption('sisea.elastic.hostname', null, 'http://127.0.0.1') . ':' . $this->modx->getOption('sisea.elastic.port', null, 9200).'/',
@@ -77,6 +66,17 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
             }
         } catch (Exception $e) {
             $this->modx->log(xPDO::LOG_LEVEL_ERROR,'Error connecting to ElasticSearch server: '.$e->getMessage());
+        }
+    }
+
+    public function autoLoad($class) {
+        $file = $this->modx->getOption('sisea.core_path', null, $this->modx->getOption('core_path').'components/simplesearch/');
+        $file .= 'model/simplesearch/driver/libs/' . $class . '.php';
+
+        $file = str_replace('\\', '/', $file);
+
+        if (file_exists($file)) {
+            require_once($file);
         }
     }
 
