@@ -75,7 +75,7 @@ $_lang['setting_sisea.solr.ssl_key_desc'] = 'File name to a PEM-formatted privat
 $_lang['setting_sisea.solr.ssl_keypassword'] = 'Solr SSL Key Password';
 $_lang['setting_sisea.solr.ssl_keypassword_desc'] = 'Password for private key for SSL key.';
 $_lang['setting_sisea.solr.ssl_cainfo'] = 'Solr SSL CA Certificates';
-$_lang['setting_sisea.solr.ssl_cainfo_desc'] = 'Name of file holding one or more CA certificates to verify peer with';
+$_lang['setting_sisea.solr.ssl_cainfo_desc'] = 'Name of file holding one or more CA certificates to verify peer with.';
 $_lang['setting_sisea.solr.ssl_capath'] = 'Solr SSL CA Certificate Path';
 $_lang['setting_sisea.solr.ssl_capath_desc'] = 'Name of directory holding multiple CA certificates to verify peer with.';
 
@@ -85,7 +85,7 @@ $_lang['setting_sisea.elastic.hostname_desc'] = 'The hostname for elastic search
 $_lang['setting_sisea.elastic.port'] = 'ElasticSearch Port';
 $_lang['setting_sisea.elastic.port_desc'] = 'The port number for elasticsearch. Default is 9200.';
 $_lang['setting_sisea.elastic.index'] = 'ElasticSearch Index name';
-$_lang['setting_sisea.elastic.index_desc'] = 'The name of index in ElasticSearch. Default is: simplesearcindex';
+$_lang['setting_sisea.elastic.index_desc'] = 'The name of index in ElasticSearch. Default is: simplesearchindex';
 $_lang['setting_sisea.elastic.search_fields'] = 'ElasticSearch Search fields';
 $_lang['setting_sisea.elastic.search_fields_desc'] = 'Fields that will be searched. Use comma \',\' as a delimiter. You can add \'^number\' after field name to boost the field. Default: pagetitle^20,introtext^10,alias^5,content^1';
 $_lang['setting_sisea.elastic.search_boost'] = 'ElasticSearch boost option';
