@@ -58,6 +58,7 @@ if (!$searchString) {
 $tpl = $modx->getOption('tpl',$scriptProperties,'SearchResult');
 $containerTpl = $modx->getOption('containerTpl',$scriptProperties,'SearchResults');
 $showExtract = $modx->getOption('showExtract',$scriptProperties,true);
+$extractSource = $modx->getOption('extractSource',$scriptProperties,'content');
 $extractLength = $modx->getOption('extractLength',$scriptProperties,200);
 $extractEllipsis = $modx->getOption('extractEllipsis',$scriptProperties,'...');
 $highlightResults = $modx->getOption('highlightResults',$scriptProperties,true);
@@ -91,7 +92,12 @@ if (!empty($response['results'])) {
         }
         if ($showExtract) {
             $extract = array_pop($search->searchArray);
-            $extract = $search->createExtract($resourceArray['content'],$extractLength,$extract,$extractEllipsis);
+            if (array_key_exists($extractSource, $resourceArray)) {
+                $text = $resourceArray[$extractSource];
+            } else {
+                $text = $modx->runSnippet($extractSource, $resourceArray);
+            }
+            $extract = $search->createExtract($text,$extractLength,$extract,$extractEllipsis);
             /* cleanup extract */
             $extract = strip_tags(preg_replace("#\<!--(.*?)--\>#si",'',$extract));
             $extract = preg_replace("#\[\[(.*?)\]\]#si",'',$extract);

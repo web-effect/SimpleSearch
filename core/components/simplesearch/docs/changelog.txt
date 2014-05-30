@@ -1,5 +1,9 @@
 Changelog for SimpleSearch.
 
+SimpleSearch next
+========================================================================
+- Added extractSource parameter - names the field for the extract, or a snippet to run (which is passed the resource array as properties)
+
 SimpleSearch 1.8.1
 ========================================================================
 - Added snippet for definition of ElasticSearch index (duplicate it and remove the _default from name to prevent recreating after update)
