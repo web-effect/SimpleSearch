@@ -1,8 +1,8 @@
 =====================
 Snippet: SimpleSearch
 =====================
-Version: 1.8.0
-Author: Shaun McCormick <shaun+sisea@modx.com>
+Version: 1.9.0
+Author: Shaun McCormick <shaun+sisea@modx.com> et all
 License: GNU GPLv2 (or later at your option)
 
 This is a simple search component. Please see the documentation at:
@@ -17,5 +17,3 @@ You can use the sample solr schema.xml file found at:
 Just rename it to schema.xml and place it in the proper conf/ directory.
 
 Thanks for using SimpleSearch!
-Shaun McCormick
-shaun+sisea@modx.com
