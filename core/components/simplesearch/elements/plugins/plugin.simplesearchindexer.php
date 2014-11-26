@@ -47,19 +47,21 @@ if (!$search->driver || (!($search->driver instanceof SimpleSearchDriverSolr) &&
  * @param id $parent
  * @return boolean
  */
-function SimpleSearchGetChildren(&$modx,&$children,$parent) {
-    $success = false;
-    $kids = $modx->getCollection('modResource',array(
-        'parent' => $parent,
-    ));
-    if (!empty($kids)) {
-        /** @var modResource $kid */
-        foreach ($kids as $kid) {
-            $children[] = $kid->toArray();
-            SimpleSearchGetChildren($modx,$children,$kid->get('id'));
+if (!function_exists(SimpleSearchGetChildren)) {
+    function SimpleSearchGetChildren(&$modx,&$children,$parent) {
+        $success = false;
+        $kids = $modx->getCollection('modResource',array(
+            'parent' => $parent,
+        ));
+        if (!empty($kids)) {
+            /** @var modResource $kid */
+            foreach ($kids as $kid) {
+                $children[] = $kid->toArray();
+                SimpleSearchGetChildren($modx,$children,$kid->get('id'));
+            }
         }
+        return $success;
     }
-    return $success;
 }
 
 $action = 'index';
