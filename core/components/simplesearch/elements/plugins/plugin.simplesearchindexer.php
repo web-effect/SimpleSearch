@@ -70,18 +70,25 @@ switch ($modx->event->name) {
     case 'OnDocFormSave':
         $action = 'index';
         $resourceArray = $scriptProperties['resource']->toArray();
-        foreach ($_POST as $k => $v) {
-            if (substr($k,0,2) == 'tv') {
-                $id = str_replace('tv','',$k);
-                /** @var modTemplateVar $tv */
-                $tv = $modx->getObject('modTemplateVar',$id);
-                if ($tv) {
-                    $resourceArray[$tv->get('name')] = $tv->renderOutput($resource->get('id'));
-                    $modx->log(modX::LOG_LEVEL_DEBUG,'Indexing '.$tv->get('name').': '.$resourceArray[$tv->get('name')]);
+
+        if ($resourceArray['published'] == 1 && $resourceArray['deleted'] == 0) {
+            $action = 'index';
+            foreach ($_POST as $k => $v) {
+                if (substr($k,0,2) == 'tv') {
+                    $id = str_replace('tv','',$k);
+                    /** @var modTemplateVar $tv */
+                    $tv = $modx->getObject('modTemplateVar',$id);
+                    if ($tv) {
+                        $resourceArray[$tv->get('name')] = $tv->renderOutput($resource->get('id'));
+                        $modx->log(modX::LOG_LEVEL_DEBUG,'Indexing '.$tv->get('name').': '.$resourceArray[$tv->get('name')]);
+                    }
+                    unset($resourceArray[$k]);
                 }
-                unset($resourceArray[$k]);
             }
+        } else {
+            $action = 'removeIndex';
         }
+
         unset($resourceArray['ta'],$resourceArray['action'],$resourceArray['tiny_toggle'],$resourceArray['HTTP_MODAUTH'],$resourceArray['modx-ab-stay'],$resourceArray['resource_groups']);
         $resourcesToIndex[] = $resourceArray;
         break;
