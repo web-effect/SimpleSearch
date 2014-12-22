@@ -105,9 +105,20 @@ class SimpleSearchDriverSolr extends SimpleSearchDriver {
         }
 
         $includeTVs = $this->modx->getOption('includeTVs',$scriptProperties,false);
+        $includeTVList = $this->modx->getOption('includeTVList', $scriptProperties, '');
         if ($includeTVs) {
             $sql = $this->modx->newQuery('modTemplateVar');
             $sql->select($this->modx->getSelectColumns('modTemplateVar','','',array('id','name')));
+
+            if (!empty ($includeTVList)) {
+                $includeTVList = explode(',', $includeTVList);
+                $includeTVList = array_map('trim', $includeTVList);
+
+                $sql->where(array(
+                    'name:IN' => $includeTVList
+                ));
+            }
+
             $sql->sortby($this->modx->escape('name'),'ASC');
             $sql->prepare();
             $sql = $sql->toSql();

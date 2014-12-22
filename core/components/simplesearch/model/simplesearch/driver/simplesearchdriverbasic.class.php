@@ -50,9 +50,22 @@ class SimpleSearchDriverBasic extends SimpleSearchDriver {
         $matchWildcard = $this->modx->getOption('matchWildcard',$scriptProperties,true);
         $docFields = explode(',',$this->modx->getOption('docFields',$scriptProperties,'pagetitle,longtitle,alias,description,introtext,content'));
         $includeTVs = $this->modx->getOption('includeTVs', $scriptProperties, false);
+        $includeTVList = $this->modx->getOption('includeTVList', $scriptProperties, '');
 
     	$c = $this->modx->newQuery('modResource');
-        if ($includeTVs) $c->leftJoin('modTemplateVarResource','TemplateVarResources');
+        if ($includeTVs) {
+            $c->leftJoin('modTemplateVarResource','TemplateVarResources');
+
+            if (!empty ($includeTVList)) {
+                $includeTVList = explode(',', $includeTVList);
+                $includeTVList = array_map('trim', $includeTVList);
+
+                $c->leftJoin('modTemplateVar','TemplateVar', 'TemplateVar.id = TemplateVarResources.tmplvarid');
+                $c->where(array(
+                    'TemplateVar.name:IN' => $includeTVList
+                ));
+            }
+        }
 
         /* if using customPackages, add here */
         $customPackages = array();

@@ -2,6 +2,7 @@ Changelog for SimpleSearch.
 
 SimpleSearch next
 ========================================================================
+- Added includeTVList parameter
 - Added extractSource parameter - names the field for the extract, or a snippet to run (which is passed the resource array as properties)
 
 SimpleSearch 1.8.1
