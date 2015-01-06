@@ -1,5 +1,7 @@
 Changelog for SimpleSearch.
 
+SimpleSearch 1.9.1
+========================================================================
 - Fixed indexing resource when it's not published or deleted
 - Fixed error with redeclared function in plugin
 - Added includeTVList parameter
