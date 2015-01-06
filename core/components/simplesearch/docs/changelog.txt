@@ -1,10 +1,11 @@
 Changelog for SimpleSearch.
 
-SimpleSearch next
-========================================================================
 - Fixed indexing resource when it's not published or deleted
 - Fixed error with redeclared function in plugin
 - Added includeTVList parameter
+
+SimpleSearch 1.9.0
+========================================================================
 - Added extractSource parameter - names the field for the extract, or a snippet to run (which is passed the resource array as properties)
 
 SimpleSearch 1.8.1
