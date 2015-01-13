@@ -77,6 +77,8 @@ $activeFacet = $modx->getOption('facet',$_REQUEST,$modx->getOption('activeFacet'
 $activeFacet = $modx->sanitizeString($activeFacet);
 $facetLimit = $modx->getOption('facetLimit',$scriptProperties,5);
 $outputSeparator = $modx->getOption('outputSeparator',$scriptProperties,"\n");
+$addSearchToLink = intval($modx->getOption('addSearchToLink',$scriptProperties,"0"));
+$searchInLinkName = $modx->getOption('searchInLinkName',$scriptProperties,"search");
 
 /* get results */
 $response = $search->getSearchResults($searchString,$scriptProperties);
@@ -88,7 +90,11 @@ if (!empty($response['results'])) {
         $resourceArray['idx'] = $idx;
         if (empty($resourceArray['link'])) {
             $ctx = !empty($resourceArray['context_key']) ? $resourceArray['context_key'] : $modx->context->get('key');
-            $resourceArray['link'] = $modx->makeUrl($resourceArray['id'],$ctx);
+            $args = '';
+            if ($addSearchToLink) {
+                $args = array($searchInLinkName => $searchString);
+            }
+            $resourceArray['link'] = $modx->makeUrl($resourceArray['id'],$ctx,$args);
         }
         if ($showExtract) {
             $extract = $search->searchArray[count($search->searchArray) - 1];

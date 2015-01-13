@@ -1,5 +1,6 @@
 Changelog for SimpleSearch.
 
+- Added option to add search term into the link
 - Fixed generating extracts
 
 SimpleSearch 1.9.1
