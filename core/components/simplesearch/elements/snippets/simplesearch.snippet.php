@@ -91,7 +91,7 @@ if (!empty($response['results'])) {
             $resourceArray['link'] = $modx->makeUrl($resourceArray['id'],$ctx);
         }
         if ($showExtract) {
-            $extract = array_pop($search->searchArray);
+            $extract = $search->searchArray[count($search->searchArray) - 1];
             if (array_key_exists($extractSource, $resourceArray)) {
                 $text = $resourceArray[$extractSource];
             } else {

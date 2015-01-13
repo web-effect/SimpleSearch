@@ -335,7 +335,7 @@ class SimpleSearch {
             $halfSide = intval($wordPos - $length / 2 + mb_strlen($search, $encoding) / 2);
             if ($halfSide > 0) {
                 $halfText = mb_substr($text, 0, $halfSide, $encoding);
-                $pos_start = min(mb_strrpos($halfText, ' ', 0, $encoding), mb_strrpos($halfText, '.', 0, $encoding));
+                $pos_start = max(mb_strrpos($halfText, ' ', 0, $encoding), mb_strrpos($halfText, '.', 0, $encoding));
                 if (!$pos_start) {
                   $pos_start = 0;
                 }
@@ -368,7 +368,7 @@ class SimpleSearch {
             $halfSide = intval($wordPos - $length / 2 + strlen($search) / 2);
             if ($halfSide > 0) {
                 $halfText = substr($text, 0, $halfSide);
-                $pos_start = min(strrpos($halfText, ' '), strrpos($halfText, '.'));
+                $pos_start = max(strrpos($halfText, ' '), strrpos($halfText, '.'));
                 if (!$pos_start) {
                   $pos_start = 0;
                 }
