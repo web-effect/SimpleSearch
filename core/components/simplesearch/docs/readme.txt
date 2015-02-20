@@ -1,7 +1,7 @@
 =====================
 Snippet: SimpleSearch
 =====================
-Version: 1.9.1
+Version: 1.9.2
 Author: Shaun McCormick <shaun+sisea@modx.com> et all
 License: GNU GPLv2 (or later at your option)
 
