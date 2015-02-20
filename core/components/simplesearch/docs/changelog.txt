@@ -1,5 +1,6 @@
 Changelog for SimpleSearch.
 
+- Generate extract for whole search string, not just for last part
 - Added option to add search term into the link
 - Fixed generating extracts
 
