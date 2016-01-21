@@ -85,57 +85,62 @@ $idx = isset($_REQUEST[$offsetIndex]) ? intval($_REQUEST[$offsetIndex]) + 1 : 1;
 $postHooks = $modx->getOption('postHooks',$scriptProperties,'');
 $activeFacet = $modx->getOption('facet',$_REQUEST,$modx->getOption('activeFacet',$scriptProperties,'default'));
 $activeFacet = $modx->sanitizeString($activeFacet);
+$onlyFacet = $modx->getOption('onlyFacet', $scriptProperties, null);
 $facetLimit = $modx->getOption('facetLimit',$scriptProperties,5);
 $outputSeparator = $modx->getOption('outputSeparator',$scriptProperties,"\n");
 $addSearchToLink = intval($modx->getOption('addSearchToLink',$scriptProperties,"0"));
 $searchInLinkName = $modx->getOption('searchInLinkName',$scriptProperties,"search");
 
 /* get results */
-$response = $search->getSearchResults($searchString,$scriptProperties);
-$placeholders = array('query' => $searchString);
-$resultsTpl = array('default' => array('results' => array(),'total' => $response['total']));
-if (!empty($response['results'])) {
-    if ( $debug ) {
-        $debug_output .= '<br>Begin iterate through search results';
-    }
-    /* iterate through search results */
-    foreach ($response['results'] as $resourceArray) {
-        $resourceArray['idx'] = $idx;
-        if ( $debug ) {
-            $debug_output .= '<br>Search found resource ID: '.$resourceArray['id'];
-        }
-        if (empty($resourceArray['link'])) {
-            $ctx = !empty($resourceArray['context_key']) ? $resourceArray['context_key'] : $modx->context->get('key');
-            $args = '';
-            if ($addSearchToLink) {
-                $args = array($searchInLinkName => $searchString);
-            }
-            $resourceArray['link'] = $modx->makeUrl($resourceArray['id'],$ctx,$args);
-        }
-        if ($showExtract) {
-            $extract = $searchString;
-            if (array_key_exists($extractSource, $resourceArray)) {
-                $text = $resourceArray[$extractSource];
-            } else {
-                $text = $modx->runSnippet($extractSource, $resourceArray);
-            }
-            $extract = $search->createExtract($text,$extractLength,$extract,$extractEllipsis);
-            /* cleanup extract */
-            $extract = strip_tags(preg_replace("#\<!--(.*?)--\>#si",'',$extract));
-            $extract = preg_replace("#\[\[(.*?)\]\]#si",'',$extract);
-            $extract = str_replace(array('[[',']]'),'',$extract);
-            $resourceArray['extract'] = !empty($highlightResults) ? $search->addHighlighting($extract,$highlightClass,$highlightTag) : $extract;
-        }
-        $resultsTpl['default']['results'][] = $search->getChunk($tpl,$resourceArray);
-        $idx++;
-    }
+if ( !is_null($onlyFacet) && $onlyFacet != 'default' ) {
+    $activeFacet = $onlyFacet;
 } else {
-    if ( $debug ) {
-        $debug_output .= '<br>No search results for search term';
+    $response = $search->getSearchResults($searchString, $scriptProperties);
+    $placeholders = array('query' => $searchString);
+    $resultsTpl = array('default' => array('results' => array(), 'total' => $response['total']));
+    if (!empty($response['results'])) {
+        if ($debug) {
+            $debug_output .= '<br>Begin iterate through search results';
+        }
+        /* iterate through search results */
+        foreach ($response['results'] as $resourceArray) {
+            $resourceArray['idx'] = $idx;
+            if ($debug) {
+                $debug_output .= '<br>Search found resource ID: ' . $resourceArray['id'];
+            }
+            if (empty($resourceArray['link'])) {
+                $ctx = !empty($resourceArray['context_key']) ? $resourceArray['context_key'] : $modx->context->get('key');
+                $args = '';
+                if ($addSearchToLink) {
+                    $args = array($searchInLinkName => $searchString);
+                }
+                $resourceArray['link'] = $modx->makeUrl($resourceArray['id'], $ctx, $args);
+            }
+            if ($showExtract) {
+                $extract = $searchString;
+                if (array_key_exists($extractSource, $resourceArray)) {
+                    $text = $resourceArray[$extractSource];
+                } else {
+                    $text = $modx->runSnippet($extractSource, $resourceArray);
+                }
+                $extract = $search->createExtract($text, $extractLength, $extract, $extractEllipsis);
+                /* cleanup extract */
+                $extract = strip_tags(preg_replace("#\<!--(.*?)--\>#si", '', $extract));
+                $extract = preg_replace("#\[\[(.*?)\]\]#si", '', $extract);
+                $extract = str_replace(array('[[', ']]'), '', $extract);
+                $resourceArray['extract'] = !empty($highlightResults) ? $search->addHighlighting($extract, $highlightClass, $highlightTag) : $extract;
+            }
+            $resultsTpl['default']['results'][] = $search->getChunk($tpl, $resourceArray);
+            $idx++;
+        }
+    } else {
+        if ($debug) {
+            $debug_output .= '<br>No search results for search term';
+        }
     }
 }
-
 /* load postHooks to get faceted results */
+$isFacetResults = false;
 if (!empty($postHooks)) {
     if ($debug) {
         $debug_output .= '<br>Post hooks found';
@@ -194,6 +199,13 @@ foreach ($resultsTpl as $facetKey => $facetResults) {
     $placeholders[$facetKey.'.results'] = $resultSet;
     $placeholders[$facetKey.'.total'] = !empty($facetResults['total']) ? $facetResults['total'] : 0;
     $placeholders[$facetKey.'.key'] = $facetKey;
+    if ( $placeholders[$facetKey.'.total'] > 0 ) {
+        $isFacetResults = true;
+        if ( empty($response['results']) && $activeFacet == 'default' ) {
+            // change to one that has results:
+            //$activeFacet = $facetKey;
+        }
+    }
 }
 if ($debug) {
     $debug_output .= '<br>Active facet: '.$activeFacet;
@@ -206,7 +218,7 @@ if ($debug) {
     $debug_output .= '<br>Active facet total: '.$placeholders['total'].' Page: '.$placeholders['page'].' Page count: '.$placeholders['page'];
 }
 
-if (!empty($response['results'])) {
+if (!empty($response['results']) || $isFacetResults ) {
     if ($debug) {
         $debug_output .= '<br>Results found for simple search, add highlighting and pagination';
     }
@@ -231,7 +243,8 @@ $placeholders['facet'] = $activeFacet;
 $modx->setPlaceholder($placeholderPrefix.'query',$searchString);
 $modx->setPlaceholder($placeholderPrefix.'count',$response['total']);
 $modx->setPlaceholders($placeholders,$placeholderPrefix);
-if (empty($response['results'])) {
+
+if (empty($response['results']) && !$isFacetResults ) {
     $output = $search->getChunk($noResultsTpl,array(
         'query' => $searchString,
     ));
