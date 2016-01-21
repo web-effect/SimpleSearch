@@ -201,10 +201,6 @@ foreach ($resultsTpl as $facetKey => $facetResults) {
     $placeholders[$facetKey.'.key'] = $facetKey;
     if ( $placeholders[$facetKey.'.total'] > 0 ) {
         $isFacetResults = true;
-        if ( empty($response['results']) && $activeFacet == 'default' ) {
-            // change to one that has results:
-            //$activeFacet = $facetKey;
-        }
     }
 }
 if ($debug) {
