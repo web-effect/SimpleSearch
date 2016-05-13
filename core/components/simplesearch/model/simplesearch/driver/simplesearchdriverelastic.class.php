@@ -194,12 +194,13 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
         /* handle exclude IDs from search */
         $exclude = $this->modx->getOption('exclude',$scriptProperties,'');
         if (!empty($exclude)) {
-            $exclude = $this->cleanIds($exclude);
-            $exclude = explode(',', $exclude);
-            $elasticaFilterExcludeId  = new \Elastica\Filter\Term();
-            $elasticaFilterExcludeId->setTerm('id', $exclude);
-            $elasticaFilterNotId = new \Elastica\Filter\BoolNot($elasticaFilterExcludeId);
-            $elasticaFilterAnd->addFilter($elasticaFilterNotId);
+            $idType = $this->modx->getOption('idType',$this->config,'parents');
+            $depth = $this->modx->getOption('depth',$this->config,10);
+            $exclude = $this->processIds($exclude,$idType,$depth);
+
+            $elasticaFilterExcludeId  = new \Elastica\Query\Terms();
+            $elasticaFilterExcludeId->setTerms('id', $exclude);
+            $elasticaFilterAnd->addMustNot($elasticaFilterExcludeId);
         }
 
         /* basic always-on conditions */
