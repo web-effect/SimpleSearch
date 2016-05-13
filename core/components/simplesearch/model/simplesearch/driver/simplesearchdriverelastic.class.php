@@ -305,6 +305,9 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
                 if($fieldName == 'id'){
                     $document->setId($value);
                 }
+                if($fieldName == 'content') {
+                    $value = strip_tags($value, '<p>,<h1>,<h2>,<h3>,<h4>,<em>,<strong>,<br>');
+                }
                 $document->set($fieldName,$value);
             }
         }
