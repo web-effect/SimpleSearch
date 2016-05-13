@@ -104,7 +104,21 @@ class SimpleSearchDriverElastic extends SimpleSearchDriver {
         $query->setFields($fields);
         $query->setQuery($string);
 
-        $customFilterScore = new \Elastica\Query\CustomFiltersScore();
+        $queryType = $this->modx->getOption('queryType', $scriptProperties, 'and');
+        switch($queryType) {
+            case 'phrase':
+                $query->setType('phrase');
+            break;
+            case 'and':
+            case 'or' :
+                $query->setOperator($queryType);
+            break;
+            default :
+                $query->setOperator('and');
+            break;
+        }
+
+        $customFilterScore = new \Elastica\Query\FunctionScore();
         $customFilterScore->setQuery($query);
 
         $searchBoosts = $this->modx->getOption('sisea.elastic.search_boost', null, '');
