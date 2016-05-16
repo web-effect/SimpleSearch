@@ -1,5 +1,6 @@
 Changelog for SimpleSearch.
 
+- Add basic debug option
 - Update Elastica
 - Update exclude parameter to always be active and to use idType
 
