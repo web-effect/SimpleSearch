@@ -1,0 +1,211 @@
+{
+  "name": "SimpleSearch",
+  "lowCaseName": "simplesearch",
+  "description": "Component for search",
+  "author": "Shaun McCormick",
+  "version": "1.8.0",
+  "package": {
+    "elements": {
+      "plugins": [
+        {
+          "name": "SimpleSearchIndexer",
+          "file": "plugin.simplesearchindexer.php",
+          "events": [
+            "OnDocFormSave",
+            "OnDocPublished",
+            "OnDocUnPublished",
+            "OnResourceDuplicate",
+            "OnResourceDelete",
+            "OnResourceUndelete"
+          ]
+        }
+      ],
+      "snippets": [
+        {
+          "name": "SimpleSearch"
+        },
+        {
+          "name": "SimpleSearchForm"
+        },
+        {
+          "name": "SimpleSearchIndexAll"
+        },
+        {
+          "name": "SimpleSearchElasticIndexSetup_default",
+          "file": "simplesearchelasticindexsetup.snippet.php"
+        }
+      ],
+      "chunks": []
+    },
+    "systemSettings": [
+      {
+        "key": "driver_class",
+        "type": "textfield",
+        "area": "Drivers",
+        "value": "SimpleSearchDriverBasic",
+        "namespace": "sisea"
+      },
+      {
+        "key": "driver_class_path",
+        "type": "textfield",
+        "area": "Drivers",
+        "value": "",
+        "namespace": "sisea"
+      },
+      {
+        "key": "driver_db_specific",
+        "type": "combo-boolean",
+        "area": "Drivers",
+        "value": true,
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.hostname",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "127.0.0.1",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.port",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "8983",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.path",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.username",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.password",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.timeout",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "30",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.ssl",
+        "type": "combo-boolean",
+        "area": "Solr",
+        "value": false,
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.ssl_cert",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.ssl_key",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.ssl_keypassword",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.ssl_cainfo",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.ssl_capath",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.proxy_host",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.proxy_port",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.proxy_username",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "",
+        "namespace": "sisea"
+      },
+      {
+        "key": "solr.proxy_password",
+        "type": "textfield",
+        "area": "Solr",
+        "value": "",
+        "namespace": "sisea"
+      },
+      {
+        "key": "elastic.hostname",
+        "type": "textfield",
+        "area": "ElasticSearch",
+        "value": "http://127.0.0.1",
+        "namespace": "sisea"
+      },
+      {
+        "key": "elastic.port",
+        "type": "textfield",
+        "area": "ElasticSearch",
+        "value": "9200",
+        "namespace": "sisea"
+      },
+      {
+        "key": "elastic.index",
+        "type": "textfield",
+        "area": "ElasticSearch",
+        "value": "simplesearchindex",
+        "namespace": "sisea"
+      },
+      {
+        "key": "elastic.search_fields",
+        "type": "textfield",
+        "area": "ElasticSearch",
+        "value": "pagetitle^20,introtext^10,alias^5,content^1",
+        "namespace": "sisea"
+      },
+      {
+        "key": "elastic.search_boost",
+        "type": "textfield",
+        "area": "ElasticSearch",
+        "value": "",
+        "namespace": "sisea"
+      }
+    ]
+  }
+}
