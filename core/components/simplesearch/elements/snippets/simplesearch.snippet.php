@@ -116,6 +116,12 @@ if ( !is_null($onlyFacet) && $onlyFacet != 'default' ) {
                 }
                 $resourceArray['link'] = $modx->makeUrl($resourceArray['id'], $ctx, $args);
             }
+            //Add highlight to fields
+            if(!empty($highlightResults)){
+                foreach($resourceArray as $resourceField=>$resourceFieldValue){
+                    $resourceArray['hl.'.$resourceField]=$search->addHighlighting($resourceFieldValue,$highlightClass,$highlightTag);
+                }
+            }
             if ($showExtract) {
                 $extract = $searchString;
                 if (array_key_exists($extractSource, $resourceArray)) {
